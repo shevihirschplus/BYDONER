@@ -79,8 +79,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp", policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
-              .AllowAnyOrigin()
+        // In production, set ALLOWED_ORIGINS env var to your Railway domain.
+        // e.g. "https://yourapp.up.railway.app"
+        var allowedOrigins = builder.Configuration["AllowedOrigins"]
+            ?? "http://localhost:4200,https://localhost:4200";
+
+        var origins = allowedOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        policy.WithOrigins(origins)
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -153,7 +158,11 @@ app.MapControllers();
 // SPA fallback: any non-API route serves index.html (for Angular routing)
 if (Directory.Exists(wwwrootBrowser))
 {
-    app.MapFallbackToFile("browser/index.html");
+    app.MapFallback(async context =>
+    {
+        context.Response.ContentType = "text/html";
+        await context.Response.SendFileAsync(Path.Combine(wwwrootBrowser, "index.html"));
+    });
 }
 
 app.Run();
