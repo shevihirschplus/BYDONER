@@ -1,0 +1,27 @@
+# Angular
+client/node_modules/
+client/dist/
+client/.angular/cache/
+
+# .NET
+server/src/**/bin/
+server/src/**/obj/
+server/src/**/*.db
+server/src/**/*.db-shm
+server/src/**/*.db-wal
+server/tests/**/bin/
+server/tests/**/obj/
+
+# Secrets / config overrides
+server/src/**/appsettings.Production.json
+**/secrets.json
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+*.user
+.vs/
+.vscode/
+
+# Zip files
+*.zip

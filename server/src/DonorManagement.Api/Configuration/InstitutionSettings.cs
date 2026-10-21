@@ -1,0 +1,12 @@
+namespace DonorManagement.Api.Configuration;
+
+public class InstitutionSettings
+{
+    public const string SectionName = "InstitutionSettings";
+
+    public string Name { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string ThankYouMessage { get; set; } = string.Empty;
+}
