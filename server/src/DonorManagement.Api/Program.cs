@@ -19,9 +19,15 @@ builder.Services.Configure<JwtSettings>(
 builder.Services.Configure<InstitutionSettings>(
     builder.Configuration.GetSection(InstitutionSettings.SectionName));
 
-// Configure Entity Framework Core with SQLite
+// Configure Entity Framework Core — uses Postgres in production, SQLite locally
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 builder.Services.AddDbContext<DonorManagement.Api.Data.AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    if (connectionString.StartsWith("Host=") || connectionString.StartsWith("postgresql://") || connectionString.StartsWith("postgres://"))
+        options.UseNpgsql(connectionString);
+    else
+        options.UseSqlite(connectionString);
+});
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()!;

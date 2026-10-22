@@ -20,6 +20,9 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        // Detect if we're using SQLite (needs string converters for DateOnly)
+        bool isSqlite = Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite";
+
         // Configure User
         modelBuilder.Entity<User>(entity =>
         {
@@ -33,10 +36,15 @@ public class AppDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.FamilyStatus)
                 .HasConversion(new EnumToStringConverter<FamilyStatus>());
-            entity.Property(e => e.Birthdate)
-                .HasConversion(
-                    v => v.HasValue ? v.Value.ToString("yyyy-MM-dd") : null,
-                    v => v != null ? DateOnly.ParseExact(v, "yyyy-MM-dd") : (DateOnly?)null);
+
+            if (isSqlite)
+            {
+                entity.Property(e => e.Birthdate)
+                    .HasConversion(
+                        v => v.HasValue ? v.Value.ToString("yyyy-MM-dd") : null,
+                        v => v != null ? DateOnly.ParseExact(v, "yyyy-MM-dd") : (DateOnly?)null);
+            }
+
             entity.HasMany(e => e.Donations)
                 .WithOne(d => d.Donor)
                 .HasForeignKey(d => d.DonorId)
@@ -53,10 +61,14 @@ public class AppDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.EventType)
                 .HasConversion(new EnumToStringConverter<EventType>());
-            entity.Property(e => e.EventDate)
-                .HasConversion(
-                    v => v.ToString("yyyy-MM-dd"),
-                    v => DateOnly.ParseExact(v, "yyyy-MM-dd"));
+
+            if (isSqlite)
+            {
+                entity.Property(e => e.EventDate)
+                    .HasConversion(
+                        v => v.ToString("yyyy-MM-dd"),
+                        v => DateOnly.ParseExact(v, "yyyy-MM-dd"));
+            }
         });
 
         // Configure Donation
@@ -69,10 +81,14 @@ public class AppDbContext : DbContext
                 .HasConversion(new EnumToStringConverter<Currency>());
             entity.Property(e => e.Amount)
                 .HasColumnType("decimal(18,2)");
-            entity.Property(e => e.DonationDate)
-                .HasConversion(
-                    v => v.ToString("yyyy-MM-dd"),
-                    v => DateOnly.ParseExact(v, "yyyy-MM-dd"));
+
+            if (isSqlite)
+            {
+                entity.Property(e => e.DonationDate)
+                    .HasConversion(
+                        v => v.ToString("yyyy-MM-dd"),
+                        v => DateOnly.ParseExact(v, "yyyy-MM-dd"));
+            }
         });
     }
 }
