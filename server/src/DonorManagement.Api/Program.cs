@@ -21,9 +21,18 @@ builder.Services.Configure<InstitutionSettings>(
 
 // Configure Entity Framework Core — uses Postgres in production, SQLite locally
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
+
+// Render provides a postgresql:// URL — convert it to Npgsql format
+if (connectionString.StartsWith("postgresql://") || connectionString.StartsWith("postgres://"))
+{
+    var uri = new Uri(connectionString);
+    var userInfo = uri.UserInfo.Split(':');
+    connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+}
+
 builder.Services.AddDbContext<DonorManagement.Api.Data.AppDbContext>(options =>
 {
-    if (connectionString.StartsWith("Host=") || connectionString.StartsWith("postgresql://") || connectionString.StartsWith("postgres://"))
+    if (connectionString.StartsWith("Host="))
         options.UseNpgsql(connectionString);
     else
         options.UseSqlite(connectionString);
