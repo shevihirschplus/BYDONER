@@ -79,6 +79,9 @@ public class AppDbContext : DbContext
                 .HasConversion(new EnumToStringConverter<PaymentMethod>());
             entity.Property(e => e.Currency)
                 .HasConversion(new EnumToStringConverter<Currency>());
+            entity.Property(e => e.DonationType)
+                .HasConversion(new EnumToStringConverter<DonationType>())
+                .HasDefaultValue(DonationType.OneTime);
             entity.Property(e => e.Amount)
                 .HasColumnType("decimal(18,2)");
 

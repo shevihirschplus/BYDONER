@@ -127,9 +127,16 @@ public class DonorService : IDonorService
         }
 
         donor.FullName = request.FullName;
+        donor.FirstName = request.FirstName;
+        donor.LastName = request.LastName;
+        donor.SpouseName = request.SpouseName;
         donor.Birthdate = request.Birthdate;
         donor.Email = request.Email;
         donor.PhoneNumber = request.PhoneNumber;
+        donor.HomePhone = request.HomePhone;
+        donor.CellPhone = request.CellPhone;
+        donor.WorkPhone = request.WorkPhone;
+        donor.GeneralNotes = request.GeneralNotes;
         donor.Country = request.Country;
         donor.City = request.City;
         donor.Location = request.Location;

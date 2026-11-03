@@ -13,236 +13,194 @@ import { DonorFormComponent } from '../donor-form/donor-form.component';
   standalone: true,
   imports: [CommonModule, FormsModule, DonorFormComponent],
   template: `
-    <div class="p-4 md:p-6">
+    <div>
       <!-- Header -->
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Donors</h1>
-        <button
-          *ngIf="isAdmin"
-          (click)="showAddDonorForm()"
-          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
-        >
-          + Add Donor
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+        <div>
+          <h1 style="font-size:1.75rem;font-weight:800;color:#f1f5f9;margin:0;letter-spacing:-0.02em">Donors</h1>
+          <p *ngIf="totalCount > 0" style="color:#64748b;font-size:0.875rem;margin:0.25rem 0 0">{{ totalCount }} total</p>
+        </div>
+        <button *ngIf="isAdmin" (click)="showAddDonorForm()" class="btn-primary">
+          <svg style="width:1rem;height:1rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Add Donor
         </button>
       </div>
 
-      <div class="flex flex-col md:flex-row gap-6">
-        <!-- Filter Panel - Sidebar on desktop, collapsible on mobile -->
-        <aside class="w-full md:w-72 shrink-0">
-          <!-- Mobile toggle -->
-          <button
-            (click)="filtersOpen = !filtersOpen"
-            class="md:hidden w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm mb-2"
-            aria-expanded="filtersOpen"
-            aria-controls="filter-panel"
-          >
-            <span class="font-medium text-gray-700">Filters</span>
-            <svg
-              class="w-5 h-5 text-gray-500 transition-transform"
-              [class.rotate-180]="filtersOpen"
-              fill="none" stroke="currentColor" viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </button>
+      <div style="display:flex;flex-direction:column;gap:1.25rem">
+        <!-- Search Bar -->
+        <div class="search-wrap">
+          <svg class="search-icon" style="width:1.125rem;height:1.125rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="onSearchChange($event)"
+            placeholder="Search by name, email, or phone..."
+            class="dark-input"
+            style="padding-left:2.5rem;padding-top:0.625rem;padding-bottom:0.625rem;font-size:0.9375rem"
+            aria-label="Search donors"
+          />
+        </div>
 
-          <!-- Filter content -->
-          <div
-            id="filter-panel"
-            class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 space-y-4"
-            [class.hidden]="!filtersOpen"
-            [class.md:block]="true"
-          >
-            <h2 class="font-semibold text-gray-800 text-sm uppercase tracking-wide">Filters</h2>
-
-            <!-- Family Status -->
-            <div>
-              <label for="familyStatus" class="block text-sm font-medium text-gray-700 mb-1">Family Status</label>
-              <select
-                id="familyStatus"
-                [(ngModel)]="filter.familyStatus"
-                (ngModelChange)="onFilterChange()"
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option [ngValue]="undefined">All</option>
-                <option *ngFor="let status of familyStatuses" [ngValue]="status">{{ status }}</option>
-              </select>
-            </div>
-
-            <!-- Location -->
-            <div>
-              <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-              <input
-                id="location"
-                type="text"
-                [(ngModel)]="filter.location"
-                (ngModelChange)="onFilterChange()"
-                placeholder="City or country..."
-                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <!-- Amount Range -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Donation Amount Range</label>
-              <div class="flex gap-2">
-                <input
-                  type="number"
-                  [(ngModel)]="filter.minAmount"
-                  (ngModelChange)="onFilterChange()"
-                  placeholder="Min"
-                  class="w-1/2 border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <input
-                  type="number"
-                  [(ngModel)]="filter.maxAmount"
-                  (ngModelChange)="onFilterChange()"
-                  placeholder="Max"
-                  class="w-1/2 border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-            </div>
-
-            <!-- Date Range -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
-              <div class="space-y-2">
-                <input
-                  type="date"
-                  [(ngModel)]="filter.fromDate"
-                  (ngModelChange)="onFilterChange()"
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="From"
-                />
-                <input
-                  type="date"
-                  [(ngModel)]="filter.toDate"
-                  (ngModelChange)="onFilterChange()"
-                  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="To"
-                />
-              </div>
-            </div>
-
-            <!-- Clear Filters -->
+        <div style="display:flex;gap:1.25rem;align-items:flex-start">
+          <!-- Filter Panel -->
+          <aside style="width:260px;flex-shrink:0">
+            <!-- Mobile toggle -->
             <button
-              (click)="clearFilters()"
-              class="w-full text-sm text-blue-600 hover:text-blue-800 font-medium py-2"
-            >
-              Clear All Filters
-            </button>
-          </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 min-w-0">
-          <!-- Search Bar -->
-          <div class="mb-4">
-            <div class="relative">
-              <svg
-                class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              (click)="filtersOpen = !filtersOpen"
+              class="glass-card"
+              style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1rem;border-radius:0.625rem;background:none;cursor:pointer;color:#e2e8f0;font-size:0.875rem;font-weight:600;margin-bottom:0.5rem"
+              [style.display]="'flex'"
+              aria-expanded="filtersOpen">
+              <span style="display:flex;align-items:center;gap:0.5rem">
+                <svg style="width:1rem;height:1rem;color:#22d3ee" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+                </svg>
+                Filters
+              </span>
+              <svg style="width:1rem;height:1rem;transition:transform 0.2s;color:#64748b" [style.transform]="filtersOpen ? 'rotate(180deg)' : 'rotate(0)'"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
               </svg>
-              <input
-                type="text"
-                [(ngModel)]="searchQuery"
-                (ngModelChange)="onSearchChange($event)"
-                placeholder="Search by name, email, or phone..."
-                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                aria-label="Search donors"
-              />
+            </button>
+
+            <div class="glass-card" id="filter-panel"
+              style="border-radius:0.75rem;padding:1.25rem;display:flex;flex-direction:column;gap:1rem"
+              [style.display]="filtersOpen ? 'flex' : 'none'">
+
+              <!-- Family Status -->
+              <div>
+                <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem;letter-spacing:0.05em;text-transform:uppercase">Family Status</label>
+                <select [(ngModel)]="filter.familyStatus" (ngModelChange)="onFilterChange()" class="dark-input"
+                  style="cursor:pointer">
+                  <option [ngValue]="undefined" style="background:#1e293b">All</option>
+                  <option *ngFor="let status of familyStatuses" [ngValue]="status" style="background:#1e293b">{{ status }}</option>
+                </select>
+              </div>
+
+              <!-- Location -->
+              <div>
+                <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem;letter-spacing:0.05em;text-transform:uppercase">Location</label>
+                <input type="text" [(ngModel)]="filter.location" (ngModelChange)="onFilterChange()"
+                  placeholder="City or country..." class="dark-input"/>
+              </div>
+
+              <!-- Amount Range -->
+              <div>
+                <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem;letter-spacing:0.05em;text-transform:uppercase">Donation Amount</label>
+                <div style="display:flex;gap:0.5rem">
+                  <input type="number" [(ngModel)]="filter.minAmount" (ngModelChange)="onFilterChange()"
+                    placeholder="Min" class="dark-input" style="width:50%"/>
+                  <input type="number" [(ngModel)]="filter.maxAmount" (ngModelChange)="onFilterChange()"
+                    placeholder="Max" class="dark-input" style="width:50%"/>
+                </div>
+              </div>
+
+              <!-- Date Range -->
+              <div>
+                <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem;letter-spacing:0.05em;text-transform:uppercase">Date Range</label>
+                <div style="display:flex;flex-direction:column;gap:0.375rem">
+                  <input type="date" [(ngModel)]="filter.fromDate" (ngModelChange)="onFilterChange()" class="dark-input"/>
+                  <input type="date" [(ngModel)]="filter.toDate" (ngModelChange)="onFilterChange()" class="dark-input"/>
+                </div>
+              </div>
+
+              <button (click)="clearFilters()"
+                style="width:100%;padding:0.5rem;font-size:0.8125rem;font-weight:600;color:#22d3ee;background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.2);border-radius:0.5rem;cursor:pointer;transition:background 0.15s">
+                Clear All Filters
+              </button>
             </div>
-          </div>
+          </aside>
 
-          <!-- Loading State -->
-          <div *ngIf="loading" class="flex justify-center items-center py-12">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          </div>
+          <!-- Main Content -->
+          <main style="flex:1;min-width:0">
 
-          <!-- Empty State -->
-          <div *ngIf="!loading && donors.length === 0" class="text-center py-12">
-            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">No donors found</h3>
-            <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filter criteria.</p>
-          </div>
+            <!-- Loading State -->
+            <div *ngIf="loading" style="display:flex;justify-content:center;align-items:center;padding:4rem 0">
+              <div class="spinner"></div>
+            </div>
 
-          <!-- Donor Cards Grid -->
-          <div *ngIf="!loading && donors.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div
-              *ngFor="let donor of donors"
-              (click)="onDonorClick(donor)"
-              class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md hover:border-blue-300 transition-all cursor-pointer"
-              role="button"
-              [attr.aria-label]="'View donor ' + donor.fullName"
-              tabindex="0"
-              (keydown.enter)="onDonorClick(donor)"
-            >
-              <!-- Donor Name -->
-              <h3 class="font-semibold text-gray-900 text-lg truncate">{{ donor.fullName }}</h3>
-
-              <!-- Email -->
-              <div class="flex items-center gap-2 mt-2 text-sm text-gray-600">
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            <!-- Empty State -->
+            <div *ngIf="!loading && donors.length === 0" style="text-align:center;padding:4rem 2rem">
+              <div style="width:64px;height:64px;border-radius:50%;background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
+                <svg style="width:2rem;height:2rem;color:#334155" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                <span class="truncate">{{ donor.email }}</span>
               </div>
+              <h3 style="font-size:1rem;font-weight:600;color:#94a3b8;margin:0 0 0.375rem">No donors found</h3>
+              <p style="font-size:0.875rem;color:#475569;margin:0">Try adjusting your search or filters.</p>
+            </div>
 
-              <!-- Phone -->
-              <div class="flex items-center gap-2 mt-1 text-sm text-gray-600">
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                </svg>
-                <span>{{ donor.phoneNumber }}</span>
-              </div>
+            <!-- Donor Cards Grid -->
+            <div *ngIf="!loading && donors.length > 0"
+              style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0.875rem">
+              <div
+                *ngFor="let donor of donors"
+                (click)="onDonorClick(donor)"
+                class="donor-card"
+                role="button"
+                [attr.aria-label]="'View donor ' + donor.fullName"
+                tabindex="0"
+                (keydown.enter)="onDonorClick(donor)">
 
-              <!-- Family Status Badge -->
-              <div class="mt-3">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  [ngClass]="{
-                    'bg-green-100 text-green-800': donor.familyStatus === 'Single',
-                    'bg-blue-100 text-blue-800': donor.familyStatus === 'Married',
-                    'bg-yellow-100 text-yellow-800': donor.familyStatus === 'Divorced',
-                    'bg-gray-100 text-gray-800': donor.familyStatus === 'Widowed'
-                  }"
-                >
+                <!-- Avatar + Name -->
+                <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.875rem">
+                  <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(6,182,212,0.3),rgba(99,102,241,0.3));border:1px solid rgba(34,211,238,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                    <span style="font-size:1rem;font-weight:700;color:#22d3ee">{{ donor.fullName.charAt(0).toUpperCase() }}</span>
+                  </div>
+                  <h3 style="font-size:0.9375rem;font-weight:700;color:#f1f5f9;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ donor.fullName }}</h3>
+                </div>
+
+                <!-- Email -->
+                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.375rem">
+                  <svg style="width:0.875rem;height:0.875rem;color:#475569;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                  <span style="font-size:0.8125rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ donor.email }}</span>
+                </div>
+
+                <!-- Phone -->
+                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.875rem">
+                  <svg style="width:0.875rem;height:0.875rem;color:#475569;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                  </svg>
+                  <span style="font-size:0.8125rem;color:#64748b">{{ donor.phoneNumber }}</span>
+                </div>
+
+                <!-- Status badge -->
+                <span class="badge"
+                  [class]="donor.familyStatus === 'Single' ? 'badge-emerald' :
+                            donor.familyStatus === 'Married' ? 'badge-cyan' :
+                            donor.familyStatus === 'Divorced' ? 'badge-amber' : 'badge-slate'">
                   {{ donor.familyStatus }}
                 </span>
               </div>
             </div>
-          </div>
 
-          <!-- Pagination -->
-          <div *ngIf="!loading && totalCount > 0" class="flex items-center justify-between mt-6 px-1">
-            <p class="text-sm text-gray-700">
-              Showing {{ startItem }} to {{ endItem }} of {{ totalCount }} donors
-            </p>
-            <div class="flex gap-2">
-              <button
-                (click)="previousPage()"
-                [disabled]="currentPage <= 1"
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Previous
-              </button>
-              <button
-                (click)="nextPage()"
-                [disabled]="currentPage >= totalPages"
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Next
-              </button>
+            <!-- Pagination -->
+            <div *ngIf="!loading && totalCount > 0" style="display:flex;align-items:center;justify-content:space-between;margin-top:1.25rem;padding:0 0.25rem">
+              <p style="font-size:0.8125rem;color:#64748b">
+                Showing {{ startItem }}–{{ endItem }} of {{ totalCount }}
+              </p>
+              <div style="display:flex;gap:0.5rem">
+                <button (click)="previousPage()" [disabled]="currentPage <= 1" class="btn-secondary"
+                  style="padding:0.4rem 0.875rem;font-size:0.8125rem">
+                  ← Prev
+                </button>
+                <span style="display:flex;align-items:center;padding:0 0.625rem;font-size:0.8125rem;color:#64748b">
+                  {{ currentPage }} / {{ totalPages }}
+                </span>
+                <button (click)="nextPage()" [disabled]="currentPage >= totalPages" class="btn-secondary"
+                  style="padding:0.4rem 0.875rem;font-size:0.8125rem">
+                  Next →
+                </button>
+              </div>
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
 
       <!-- Add Donor Form Modal -->

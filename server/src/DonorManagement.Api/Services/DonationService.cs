@@ -62,6 +62,7 @@ public class DonationService : IDonationService
         donation.DonationDate = request.DonationDate;
         donation.Notes = request.Notes;
         donation.PaymentMethod = request.PaymentMethod;
+        donation.DonationType = request.DonationType;
         donation.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();

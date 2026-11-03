@@ -1,18 +1,23 @@
+using System.Text.Json.Serialization;
 using DonorManagement.Api.Models.Enums;
 
 namespace DonorManagement.Api.DTOs;
 
-public record CreateEventRequest(
-    EventType EventType,
-    DateOnly EventDate,
-    string? Notes
-);
+public class CreateEventRequest
+{
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public EventType EventType { get; set; }
+    public DateOnly EventDate { get; set; }
+    public string? Notes { get; set; }
+}
 
-public record UpdateEventRequest(
-    EventType EventType,
-    DateOnly EventDate,
-    string? Notes
-);
+public class UpdateEventRequest
+{
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public EventType EventType { get; set; }
+    public DateOnly EventDate { get; set; }
+    public string? Notes { get; set; }
+}
 
 public class EventResponse
 {

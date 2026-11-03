@@ -11,6 +11,7 @@ public class Donation
     public DateOnly DonationDate { get; set; }
     public string? Notes { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
+    public DonationType DonationType { get; set; } = DonationType.OneTime;
     public string ReceiptNumber { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

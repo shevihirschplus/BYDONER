@@ -69,6 +69,18 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
           <h2 class="text-xl font-bold text-gray-900 mb-4">{{ donor.fullName }}</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
+              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">First Name</span>
+              <span class="block mt-1 text-sm text-gray-900">{{ donor.firstName || 'N/A' }}</span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Last Name</span>
+              <span class="block mt-1 text-sm text-gray-900">{{ donor.lastName || 'N/A' }}</span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Spouse / Partner</span>
+              <span class="block mt-1 text-sm text-gray-900">{{ donor.spouseName || 'N/A' }}</span>
+            </div>
+            <div>
               <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Birthdate</span>
               <span class="block mt-1 text-sm text-gray-900">{{ donor.birthdate ? (donor.birthdate | date:'mediumDate') : 'N/A' }}</span>
             </div>
@@ -77,8 +89,16 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
               <span class="block mt-1 text-sm text-gray-900">{{ donor.email }}</span>
             </div>
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Phone</span>
+              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Cell Phone</span>
               <span class="block mt-1 text-sm text-gray-900">{{ donor.phoneNumber }}</span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Home Phone</span>
+              <span class="block mt-1 text-sm text-gray-900">{{ donor.homePhone || 'N/A' }}</span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Work Phone</span>
+              <span class="block mt-1 text-sm text-gray-900">{{ donor.workPhone || 'N/A' }}</span>
             </div>
             <div>
               <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Country / City</span>
@@ -90,7 +110,7 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
             </div>
             <div>
               <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Family Status</span>
-              <span class="inline-flex items-center mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium"
+              <span *ngIf="donor.familyStatus" class="inline-flex items-center mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium"
                 [ngClass]="{
                   'bg-green-100 text-green-800': donor.familyStatus === 'Single',
                   'bg-blue-100 text-blue-800': donor.familyStatus === 'Married',
@@ -99,10 +119,15 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
                 }">
                 {{ donor.familyStatus }}
               </span>
+              <span *ngIf="!donor.familyStatus" class="block mt-1 text-sm text-gray-900">N/A</span>
             </div>
             <div>
               <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Number of Kids</span>
               <span class="block mt-1 text-sm text-gray-900">{{ donor.numberOfKids }}</span>
+            </div>
+            <div class="sm:col-span-2" *ngIf="donor.generalNotes">
+              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">General Notes</span>
+              <span class="block mt-1 text-sm text-gray-900" style="white-space:pre-wrap">{{ donor.generalNotes }}</span>
             </div>
           </div>
         </div>

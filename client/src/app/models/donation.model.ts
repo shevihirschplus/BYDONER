@@ -7,7 +7,12 @@ export enum PaymentMethod {
   Other = 'Other'
 }
 
-export type Currency = 'USD' | 'NIS';
+export enum DonationType {
+  OneTime = 'OneTime',
+  Annual = 'Annual'
+}
+
+export type Currency = 'USD' | 'NIS' |'GPB';
 
 export interface Donation {
   id: string;
@@ -17,6 +22,7 @@ export interface Donation {
   donationDate: string;
   notes: string | null;
   paymentMethod: PaymentMethod;
+  donationType: DonationType;
   receiptNumber: string;
   createdAt: string;
   updatedAt: string;
@@ -28,6 +34,7 @@ export interface CreateDonationRequest {
   donationDate: string;
   notes: string | null;
   paymentMethod: PaymentMethod;
+  donationType: DonationType;
 }
 
 export interface UpdateDonationRequest {
@@ -36,4 +43,5 @@ export interface UpdateDonationRequest {
   donationDate: string;
   notes: string | null;
   paymentMethod: PaymentMethod;
+  donationType: DonationType;
 }

@@ -21,7 +21,8 @@ public enum PaymentMethod
 public enum Currency
 {
     USD,
-    NIS
+    NIS,
+    GBP
 }
 
 public enum EventType
@@ -31,5 +32,12 @@ public enum EventType
     Wedding,
     BarMitzva,
     Dinner,
-    Visit
+    Visit,
+    FollowUp
+}
+
+public enum DonationType
+{
+    OneTime,
+    Annual
 }

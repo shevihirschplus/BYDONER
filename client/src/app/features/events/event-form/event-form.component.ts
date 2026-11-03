@@ -12,85 +12,76 @@ import { DonorEvent, EventType, EVENT_TYPE_LABELS, CreateEventRequest, UpdateEve
   template: `
     <div
       *ngIf="visible"
-      class="fixed inset-0 z-50 flex items-center justify-center"
-      role="dialog"
-      aria-modal="true"
+      style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center"
+      role="dialog" aria-modal="true"
       [attr.aria-label]="event ? 'Edit Event' : 'Add Event'"
     >
       <!-- Backdrop -->
-      <div class="absolute inset-0 bg-black/50" (click)="onClose()"></div>
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px)" (click)="onClose()"></div>
 
       <!-- Modal -->
-      <div class="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+      <div style="position:relative;width:100%;max-width:460px;margin:1rem;background:#0f172a;border:1px solid rgba(100,116,139,0.25);border-radius:1rem;box-shadow:0 25px 60px rgba(0,0,0,0.6)">
+
         <!-- Header -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h2 class="text-xl font-semibold text-gray-900">
-            {{ event ? 'Edit Event' : 'Add Event' }}
-          </h2>
-          <button (click)="onClose()" class="text-gray-400 hover:text-gray-600 transition-colors" aria-label="Close">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid rgba(100,116,139,0.15)">
+          <div style="display:flex;align-items:center;gap:0.75rem">
+            <div style="width:36px;height:36px;border-radius:0.5rem;background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(34,211,238,0.2));border:1px solid rgba(139,92,246,0.25);display:flex;align-items:center;justify-content:center">
+              <svg style="width:1.125rem;height:1.125rem;color:#a78bfa" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <h2 style="font-size:1.0625rem;font-weight:700;color:#f1f5f9;margin:0">{{ event ? 'Edit Event' : 'Add Event' }}</h2>
+          </div>
+          <button (click)="onClose()" style="background:none;border:none;cursor:pointer;color:#64748b;padding:0.25rem;border-radius:0.375rem;display:flex;align-items:center" aria-label="Close">
+            <svg style="width:1.25rem;height:1.25rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </button>
         </div>
 
         <!-- Form -->
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="px-6 py-4 space-y-4">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" style="padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem">
 
           <!-- Event Type -->
           <div>
-            <label for="eventType" class="block text-sm font-medium text-gray-700 mb-1">Event Type *</label>
-            <select
-              id="eventType"
-              formControlName="eventType"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              [class.border-red-500]="isFieldInvalid('eventType')"
-            >
-              <option value="" disabled>Select event type</option>
-              <option *ngFor="let type of eventTypes" [value]="type">{{ getLabel(type) }}</option>
+            <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem;letter-spacing:0.05em;text-transform:uppercase">
+              Event Type <span style="color:#f87171">*</span>
+            </label>
+            <select formControlName="eventType" class="dark-input"
+              [class.error]="isFieldInvalid('eventType')" style="cursor:pointer">
+              <option value="" disabled style="background:#1e293b;color:#64748b">Select event type</option>
+              <option *ngFor="let type of eventTypes" [value]="type" style="background:#1e293b;color:#e2e8f0">{{ getLabel(type) }}</option>
             </select>
-            <p *ngIf="isFieldInvalid('eventType')" class="mt-1 text-sm text-red-600">Event type is required.</p>
+            <p *ngIf="isFieldInvalid('eventType')" style="margin-top:0.3rem;font-size:0.75rem;color:#f87171">Event type is required.</p>
           </div>
 
           <!-- Event Date -->
           <div>
-            <label for="eventDate" class="block text-sm font-medium text-gray-700 mb-1">Date *</label>
-            <input
-              id="eventDate"
-              type="date"
-              formControlName="eventDate"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              [class.border-red-500]="isFieldInvalid('eventDate')"
-            />
-            <p *ngIf="isFieldInvalid('eventDate')" class="mt-1 text-sm text-red-600">Date is required.</p>
+            <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem;letter-spacing:0.05em;text-transform:uppercase">
+              Date <span style="color:#f87171">*</span>
+            </label>
+            <input type="date" formControlName="eventDate" class="dark-input"
+              [class.error]="isFieldInvalid('eventDate')"/>
+            <p *ngIf="isFieldInvalid('eventDate')" style="margin-top:0.3rem;font-size:0.75rem;color:#f87171">Date is required.</p>
           </div>
 
           <!-- Notes -->
           <div>
-            <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-            <textarea
-              id="notes"
-              formControlName="notes"
-              rows="3"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            ></textarea>
+            <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem;letter-spacing:0.05em;text-transform:uppercase">Notes</label>
+            <textarea formControlName="notes" rows="3" class="dark-input"
+              placeholder="Optional notes…"
+              style="resize:vertical;font-family:inherit;line-height:1.5"></textarea>
           </div>
 
           <!-- Actions -->
-          <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-            <button
-              type="button"
-              (click)="onClose()"
-              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              [disabled]="form.invalid || submitting"
-              class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {{ submitting ? 'Saving...' : (event ? 'Update' : 'Add') }}
+          <div style="display:flex;justify-content:flex-end;gap:0.75rem;padding-top:0.5rem;border-top:1px solid rgba(100,116,139,0.15)">
+            <button type="button" (click)="onClose()" class="btn-secondary">Cancel</button>
+            <button type="submit" class="btn-primary" [disabled]="form.invalid || submitting">
+              <span *ngIf="submitting" style="display:flex;align-items:center;gap:0.375rem">
+                <span style="width:0.875rem;height:0.875rem;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block"></span>
+                Saving...
+              </span>
+              <span *ngIf="!submitting">{{ event ? 'Update' : 'Add' }}</span>
             </button>
           </div>
         </form>
@@ -146,7 +137,13 @@ export class EventFormComponent implements OnChanges {
 
     this.submitting = true;
     const { eventType, eventDate, notes } = this.form.getRawValue();
-    const request: CreateEventRequest | UpdateEventRequest = { eventType, eventDate, notes: notes || null };
+
+    // Ensure date is sent as a plain yyyy-MM-dd string (what DateOnly expects)
+    const request: CreateEventRequest | UpdateEventRequest = {
+      eventType,
+      eventDate: eventDate || null,
+      notes: notes || null
+    };
 
     const op$ = this.event
       ? this.eventService.update(this.event.id, request)
@@ -159,9 +156,12 @@ export class EventFormComponent implements OnChanges {
         this.saved.emit();
         this.closed.emit();
       },
-      error: () => {
+      error: (err) => {
         this.submitting = false;
-        this.notificationService.error('Failed to save event. Please try again.');
+        const detail = err?.error?.errors
+          ? JSON.stringify(err.error.errors)
+          : err?.error?.message || err?.message || `Status ${err.status}`;
+        this.notificationService.error(`Failed to save event: ${detail}`);
       }
     });
   }

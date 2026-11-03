@@ -93,6 +93,10 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(
             new System.Text.Json.Serialization.JsonStringEnumConverter());
+        options.JsonSerializerOptions.Converters.Add(
+            new DateOnlyJsonConverter());
+        options.JsonSerializerOptions.Converters.Add(
+            new NullableDateOnlyJsonConverter());
     });
 
 // Configure CORS

@@ -11,14 +11,21 @@ export enum FamilyStatus {
 export interface Donor {
   id: string;
   fullName: string;
+  firstName: string | null;
+  lastName: string | null;
+  spouseName: string | null;
   birthdate: string | null;
   email: string;
   phoneNumber: string;
+  homePhone: string | null;
+  cellPhone: string | null;
+  workPhone: string | null;
+  generalNotes: string | null;
   country: string | null;
   city: string | null;
   location: string | null;
   fullAddress: string | null;
-  familyStatus: FamilyStatus;
+  familyStatus: FamilyStatus | null;
   numberOfKids: number;
   createdAt: string;
   updatedAt: string;
@@ -28,27 +35,41 @@ export interface Donor {
 
 export interface CreateDonorRequest {
   fullName: string;
+  firstName: string | null;
+  lastName: string | null;
+  spouseName: string | null;
   birthdate: string | null;
   email: string;
   phoneNumber: string;
+  homePhone: string | null;
+  cellPhone: string | null;
+  workPhone: string | null;
+  generalNotes: string | null;
   country: string | null;
   city: string | null;
   location: string | null;
   fullAddress: string | null;
-  familyStatus: FamilyStatus;
+  familyStatus: FamilyStatus | null;
   numberOfKids: number;
 }
 
 export interface UpdateDonorRequest {
   fullName: string;
+  firstName: string | null;
+  lastName: string | null;
+  spouseName: string | null;
   birthdate: string | null;
   email: string;
   phoneNumber: string;
+  homePhone: string | null;
+  cellPhone: string | null;
+  workPhone: string | null;
+  generalNotes: string | null;
   country: string | null;
   city: string | null;
   location: string | null;
   fullAddress: string | null;
-  familyStatus: FamilyStatus;
+  familyStatus: FamilyStatus | null;
   numberOfKids: number;
 }
 

@@ -4,7 +4,8 @@ export enum EventType {
   Wedding = 'Wedding',
   BarMitzva = 'BarMitzva',
   Dinner = 'Dinner',
-  Visit = 'Visit'
+  Visit = 'Visit',
+  FollowUp = 'FollowUp'
 }
 
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
@@ -13,7 +14,8 @@ export const EVENT_TYPE_LABELS: Record<EventType, string> = {
   [EventType.Wedding]: 'Wedding',
   [EventType.BarMitzva]: 'Bar Mitzva',
   [EventType.Dinner]: 'Dinner',
-  [EventType.Visit]: 'ביקור התרמה'
+  [EventType.Visit]: 'ביקור התרמה',
+  [EventType.FollowUp]: 'Follow Up'
 };
 
 export interface DonorEvent {
