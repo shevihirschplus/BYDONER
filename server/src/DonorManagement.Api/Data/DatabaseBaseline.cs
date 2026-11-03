@@ -3,20 +3,23 @@ using Microsoft.EntityFrameworkCore;
 namespace DonorManagement.Api.Data;
 
 /// <summary>
-/// Handles the one-time transition of a PostgreSQL database that was originally
-/// created with EnsureCreated() (so it has tables but no __EFMigrationsHistory)
-/// over to EF Core migrations.
+/// Reconciles a PostgreSQL database that was originally created with EnsureCreated()
+/// with EF Core migrations, and keeps the live schema in sync with the model.
 ///
-/// Without this, the first call to Migrate() tries to run InitialCreate against a
-/// database that already has the tables, failing with
-/// 'relation "Donors" already exists' (SqlState 42P07).
+/// Two independent concerns, both idempotent and safe to run on every startup:
 ///
-/// This runs safely in all cases:
-///  - Fresh DB (no tables): does nothing, lets Migrate() create everything.
-///  - Legacy EnsureCreated DB: adds any columns the model expects but the live
-///    schema is missing, then records InitialCreate as already applied so Migrate()
-///    skips it and only applies future migrations.
-///  - Already-baselined DB: does nothing.
+/// 1. Schema sync: adds any columns the current model expects but an older
+///    EnsureCreated()-era schema is missing (e.g. Donation.DonationType). Uses
+///    ADD COLUMN IF NOT EXISTS so it is a no-op once the columns exist. This runs
+///    whenever the base tables already exist, regardless of migration history,
+///    so it also repairs databases that were baselined before this fix existed.
+///
+/// 2. History baseline: if the base tables exist but the InitialCreate migration
+///    is not recorded in __EFMigrationsHistory, record it so Migrate() does not
+///    try to recreate existing tables ('relation "Donors" already exists', 42P07).
+///
+/// On a fresh database (no tables) this does nothing and lets Migrate() build
+/// everything from the migrations.
 /// </summary>
 public static class DatabaseBaseline
 {
@@ -29,47 +32,40 @@ public static class DatabaseBaseline
         if (!db.Database.IsNpgsql())
             return;
 
-        // Does the legacy "Donors" table already exist?
-        bool donorsTableExists = Convert.ToBoolean(ExecuteScalar(db,
-            """
-            SELECT EXISTS (
-                SELECT 1 FROM information_schema.tables
-                WHERE table_schema = 'public' AND table_name = 'Donors'
-            );
-            """));
-
-        // Fresh database (no tables yet) -> nothing to baseline; let Migrate() build it.
-        if (!donorsTableExists)
+        // If the base tables don't exist yet, this is a fresh database; let
+        // Migrate() create everything from the migrations.
+        if (!TableExists(db, "Donors"))
             return;
 
-        // Does the migrations history table exist? (A prior failed Migrate() may
-        // have created it but left it EMPTY.)
-        bool historyTableExists = Convert.ToBoolean(ExecuteScalar(db,
-            """
+        // 1. Schema sync — always safe, repairs drift from the EnsureCreated() era.
+        db.Database.ExecuteSqlRaw(SchemaSyncSql);
+
+        // 2. History baseline — only when InitialCreate is not yet recorded.
+        if (!InitialMigrationRecorded(db))
+            db.Database.ExecuteSqlRaw(BaselineHistorySql);
+    }
+
+    private static bool TableExists(AppDbContext db, string tableName)
+        => Convert.ToBoolean(ExecuteScalar(db,
+            $"""
             SELECT EXISTS (
                 SELECT 1 FROM information_schema.tables
-                WHERE table_schema = 'public' AND table_name = '__EFMigrationsHistory'
+                WHERE table_schema = 'public' AND table_name = '{tableName}'
             );
             """));
 
-        // Has the initial migration specifically been recorded as applied?
-        // We check the row, NOT merely the table's existence, because an empty
-        // history table still needs baselining.
-        bool initialMigrationRecorded = historyTableExists && Convert.ToBoolean(ExecuteScalar(db,
+    private static bool InitialMigrationRecorded(AppDbContext db)
+    {
+        if (!TableExists(db, "__EFMigrationsHistory"))
+            return false;
+
+        return Convert.ToBoolean(ExecuteScalar(db,
             $"""
             SELECT EXISTS (
                 SELECT 1 FROM "__EFMigrationsHistory"
                 WHERE "MigrationId" = '{InitialMigrationId}'
             );
             """));
-
-        if (initialMigrationRecorded)
-            return;
-
-        // Legacy EnsureCreated database (tables exist but InitialCreate is not
-        // recorded). Bring the schema up to the current model, then mark the
-        // initial migration as applied so Migrate() skips re-creating tables.
-        db.Database.ExecuteSqlRaw(BaselineSql);
     }
 
     private static object? ExecuteScalar(AppDbContext db, string sql)
@@ -89,9 +85,11 @@ public static class DatabaseBaseline
         }
     }
 
-    // Adds any missing Donor columns (safe via IF NOT EXISTS), creates the history
-    // table, and records InitialCreate as applied. Idempotent.
-    private const string BaselineSql = """
+    // Adds any columns the current model expects that an older schema may lack.
+    // All statements use IF NOT EXISTS, so this is a no-op on an up-to-date DB.
+    // Enum columns are stored as text (EnumToStringConverter); defaults use valid
+    // enum member names so existing rows satisfy the NOT NULL constraints.
+    private const string SchemaSyncSql = """
         ALTER TABLE "Donors" ADD COLUMN IF NOT EXISTS "FirstName"     text;
         ALTER TABLE "Donors" ADD COLUMN IF NOT EXISTS "LastName"      text;
         ALTER TABLE "Donors" ADD COLUMN IF NOT EXISTS "SpouseName"    text;
@@ -107,6 +105,23 @@ public static class DatabaseBaseline
         ALTER TABLE "Donors" ADD COLUMN IF NOT EXISTS "FamilyStatus"  text;
         ALTER TABLE "Donors" ADD COLUMN IF NOT EXISTS "NumberOfKids"  integer NOT NULL DEFAULT 0;
 
+        ALTER TABLE "Donations" ADD COLUMN IF NOT EXISTS "Currency"      text NOT NULL DEFAULT 'USD';
+        ALTER TABLE "Donations" ADD COLUMN IF NOT EXISTS "Notes"         text;
+        ALTER TABLE "Donations" ADD COLUMN IF NOT EXISTS "PaymentMethod" text NOT NULL DEFAULT 'Cash';
+        ALTER TABLE "Donations" ADD COLUMN IF NOT EXISTS "DonationType"  text NOT NULL DEFAULT 'OneTime';
+        ALTER TABLE "Donations" ADD COLUMN IF NOT EXISTS "ReceiptNumber" text NOT NULL DEFAULT '';
+        ALTER TABLE "Donations" ADD COLUMN IF NOT EXISTS "CreatedAt"     timestamp with time zone NOT NULL DEFAULT now();
+        ALTER TABLE "Donations" ADD COLUMN IF NOT EXISTS "UpdatedAt"     timestamp with time zone NOT NULL DEFAULT now();
+
+        ALTER TABLE "Events" ADD COLUMN IF NOT EXISTS "EventType" text NOT NULL DEFAULT 'Birthday';
+        ALTER TABLE "Events" ADD COLUMN IF NOT EXISTS "Notes"     text;
+        ALTER TABLE "Events" ADD COLUMN IF NOT EXISTS "CreatedAt" timestamp with time zone NOT NULL DEFAULT now();
+        ALTER TABLE "Events" ADD COLUMN IF NOT EXISTS "UpdatedAt" timestamp with time zone NOT NULL DEFAULT now();
+        """;
+
+    // Creates the history table (if needed) and records InitialCreate as applied,
+    // so Migrate() skips recreating already-existing tables.
+    private const string BaselineHistorySql = """
         CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
             "MigrationId" character varying(150) NOT NULL,
             "ProductVersion" character varying(32) NOT NULL,
