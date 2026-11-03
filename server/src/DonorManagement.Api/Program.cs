@@ -132,7 +132,13 @@ using (var scope = app.Services.CreateScope())
     // Locally we use SQLite, where Migrate() would require SQLite-specific migrations;
     // so only call Migrate() when running against a relational provider that has migrations.
     if (db.Database.IsNpgsql())
+    {
+        // One-time transition for databases originally created with EnsureCreated():
+        // bring the schema up to date and mark the initial migration as applied so
+        // Migrate() does not try to recreate existing tables. No-op once baselined.
+        DonorManagement.Api.Data.DatabaseBaseline.EnsurePostgresBaseline(db);
         db.Database.Migrate();
+    }
     else
         db.Database.EnsureCreated();
 
