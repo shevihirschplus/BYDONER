@@ -40,7 +40,7 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
       </div>
 
       <!-- Donor Card -->
-      <div *ngIf="donor && !loading">
+      <div *ngIf="donor && !loading" style="display:flex;flex-direction:column">
         <!-- Header -->
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
           <button (click)="goBack()"
@@ -122,7 +122,7 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
         </div>
 
         <!-- Events Section -->
-        <div class="glass-card" style="padding:1.5rem;margin-bottom:1.25rem">
+        <div class="glass-card" style="padding:1.5rem;order:2">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
             <h3 style="font-size:1.0625rem;font-weight:700;color:#f1f5f9;margin:0">
               Events
@@ -186,7 +186,7 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
         </div>
 
         <!-- Donation History Section -->
-        <div class="glass-card" style="padding:1.5rem">
+        <div class="glass-card" style="padding:1.5rem;margin-bottom:1.25rem;order:1">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
             <h3 style="font-size:1.0625rem;font-weight:700;color:#f1f5f9;margin:0">
               Donation History
@@ -212,10 +212,13 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
               <button (click)="toggleDonation(i)" class="accordion-header" style="width:100%;text-align:left;background:none;border:none"
                 [attr.aria-expanded]="expandedDonations.has(i)"
                 [attr.aria-controls]="'donation-panel-' + i">
-                <div style="display:flex;align-items:center;gap:1rem;min-width:0">
+                <div style="display:flex;align-items:center;gap:0.75rem;min-width:0">
                   <span style="font-weight:700;color:#34d399;white-space:nowrap">{{ donation.amount | currency }}</span>
                   <span style="font-size:0.875rem;color:#94a3b8">{{ donation.donationDate | date:'mediumDate' }}</span>
                   <span class="badge badge-slate">{{ donation.paymentMethod }}</span>
+                  <span class="badge" [class]="donation.donationType === 'Annual' ? 'badge-violet' : 'badge-cyan'">
+                    {{ donation.donationType === 'Annual' ? 'Annual' : 'One Time' }}
+                  </span>
                 </div>
                 <svg style="width:1.25rem;height:1.25rem;color:#64748b;flex-shrink:0;transition:transform 0.2s"
                   [style.transform]="expandedDonations.has(i) ? 'rotate(180deg)' : 'rotate(0)'"
@@ -237,6 +240,13 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
                   <div>
                     <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Payment Method</span>
                     <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donation.paymentMethod }}</span>
+                  </div>
+                  <div>
+                    <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Type</span>
+                    <span class="badge" style="margin-top:0.25rem"
+                      [class]="donation.donationType === 'Annual' ? 'badge-violet' : 'badge-cyan'">
+                      {{ donation.donationType === 'Annual' ? 'Annual' : 'One Time' }}
+                    </span>
                   </div>
                   <div>
                     <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Receipt Number</span>
