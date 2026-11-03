@@ -38,7 +38,12 @@ public static class DatabaseBaseline
             );
             """));
 
-        // Does the migrations history table already exist?
+        // Fresh database (no tables yet) -> nothing to baseline; let Migrate() build it.
+        if (!donorsTableExists)
+            return;
+
+        // Does the migrations history table exist? (A prior failed Migrate() may
+        // have created it but left it EMPTY.)
         bool historyTableExists = Convert.ToBoolean(ExecuteScalar(db,
             """
             SELECT EXISTS (
@@ -47,13 +52,23 @@ public static class DatabaseBaseline
             );
             """));
 
-        // Fresh database or already on migrations -> nothing to baseline.
-        // If the history table exists we assume migrations are in control already.
-        if (!donorsTableExists || historyTableExists)
+        // Has the initial migration specifically been recorded as applied?
+        // We check the row, NOT merely the table's existence, because an empty
+        // history table still needs baselining.
+        bool initialMigrationRecorded = historyTableExists && Convert.ToBoolean(ExecuteScalar(db,
+            $"""
+            SELECT EXISTS (
+                SELECT 1 FROM "__EFMigrationsHistory"
+                WHERE "MigrationId" = '{InitialMigrationId}'
+            );
+            """));
+
+        if (initialMigrationRecorded)
             return;
 
-        // Legacy EnsureCreated database. Bring the schema up to the current model,
-        // then mark the initial migration as applied.
+        // Legacy EnsureCreated database (tables exist but InitialCreate is not
+        // recorded). Bring the schema up to the current model, then mark the
+        // initial migration as applied so Migrate() skips re-creating tables.
         db.Database.ExecuteSqlRaw(BaselineSql);
     }
 
