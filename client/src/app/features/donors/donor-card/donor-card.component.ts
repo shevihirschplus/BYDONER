@@ -20,21 +20,21 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
   standalone: true,
   imports: [CommonModule, ConfirmDialogComponent, DonorFormComponent, DonationFormComponent, EventFormComponent],
   template: `
-    <div class="p-4 md:p-6 max-w-4xl mx-auto">
+    <div style="max-width:56rem;margin:0 auto">
       <!-- Loading State -->
-      <div *ngIf="loading" class="flex justify-center items-center py-12">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div *ngIf="loading" style="display:flex;justify-content:center;align-items:center;padding:4rem 0">
+        <div class="spinner"></div>
       </div>
 
       <!-- Error State -->
-      <div *ngIf="error && !loading" class="text-center py-12">
-        <svg class="mx-auto h-12 w-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      <div *ngIf="error && !loading" style="text-align:center;padding:4rem 0">
+        <svg style="width:3rem;height:3rem;color:#f87171;margin:0 auto 0.75rem;display:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">Donor not found</h3>
-        <p class="mt-1 text-sm text-gray-500">{{ error }}</p>
-        <button (click)="goBack()" class="mt-4 text-blue-600 hover:text-blue-800 font-medium text-sm">
+        <h3 style="font-size:1rem;font-weight:600;color:#e2e8f0;margin:0 0 0.375rem">Donor not found</h3>
+        <p style="font-size:0.875rem;color:#64748b;margin:0 0 1rem">{{ error }}</p>
+        <button (click)="goBack()" style="color:#22d3ee;font-weight:600;font-size:0.875rem;background:none;border:none;cursor:pointer">
           Back to Donors
         </button>
       </div>
@@ -42,172 +42,142 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
       <!-- Donor Card -->
       <div *ngIf="donor && !loading">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
-          <button
-            (click)="goBack()"
-            class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+          <button (click)="goBack()"
+            style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.875rem;font-weight:500;color:#94a3b8;background:none;border:none;cursor:pointer;transition:color 0.15s">
+            <svg style="width:1.25rem;height:1.25rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
             Back to Donors
           </button>
-          <div *ngIf="isAdmin" class="flex gap-2">
-            <button (click)="showEditForm()"
-              class="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors">
-              Edit
-            </button>
-            <button (click)="showDeleteDialog()"
-              class="px-4 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 transition-colors">
-              Delete
-            </button>
+          <div *ngIf="isAdmin" style="display:flex;gap:0.5rem">
+            <button (click)="showEditForm()" class="btn-secondary">Edit</button>
+            <button (click)="showDeleteDialog()" class="btn-danger">Delete</button>
           </div>
         </div>
 
         <!-- Personal Information -->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
-          <h2 class="text-xl font-bold text-gray-900 mb-4">{{ donor.fullName }}</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="glass-card" style="padding:1.5rem;margin-bottom:1.25rem">
+          <h2 style="font-size:1.375rem;font-weight:800;color:#f1f5f9;margin:0 0 1.25rem">{{ donor.fullName }}</h2>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">First Name</span>
-              <span class="block mt-1 text-sm text-gray-900">{{ donor.firstName || 'N/A' }}</span>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">First Name</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.firstName || 'N/A' }}</span>
             </div>
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Last Name</span>
-              <span class="block mt-1 text-sm text-gray-900">{{ donor.lastName || 'N/A' }}</span>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Last Name</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.lastName || 'N/A' }}</span>
             </div>
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Spouse / Partner</span>
-              <span class="block mt-1 text-sm text-gray-900">{{ donor.spouseName || 'N/A' }}</span>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Spouse / Partner</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.spouseName || 'N/A' }}</span>
             </div>
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Birthdate</span>
-              <span class="block mt-1 text-sm text-gray-900">{{ donor.birthdate ? (donor.birthdate | date:'mediumDate') : 'N/A' }}</span>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Birthdate</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.birthdate ? (donor.birthdate | date:'mediumDate') : 'N/A' }}</span>
             </div>
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Email</span>
-              <span class="block mt-1 text-sm text-gray-900">{{ donor.email }}</span>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Email</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.email }}</span>
             </div>
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Cell Phone</span>
-              <span class="block mt-1 text-sm text-gray-900">{{ donor.phoneNumber }}</span>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Cell Phone</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.phoneNumber }}</span>
             </div>
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Home Phone</span>
-              <span class="block mt-1 text-sm text-gray-900">{{ donor.homePhone || 'N/A' }}</span>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Home Phone</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.homePhone || 'N/A' }}</span>
             </div>
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Work Phone</span>
-              <span class="block mt-1 text-sm text-gray-900">{{ donor.workPhone || 'N/A' }}</span>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Work Phone</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.workPhone || 'N/A' }}</span>
             </div>
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Country / City</span>
-              <span class="block mt-1 text-sm text-gray-900">{{ getLocation() }}</span>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Country / City</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ getLocation() }}</span>
             </div>
-            <div class="sm:col-span-2">
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Full Address</span>
-              <span class="block mt-1 text-sm text-gray-900">{{ donor.fullAddress || 'N/A' }}</span>
+            <div style="grid-column:1/-1">
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Full Address</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.fullAddress || 'N/A' }}</span>
             </div>
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Family Status</span>
-              <span *ngIf="donor.familyStatus" class="inline-flex items-center mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium"
-                [ngClass]="{
-                  'bg-green-100 text-green-800': donor.familyStatus === 'Single',
-                  'bg-blue-100 text-blue-800': donor.familyStatus === 'Married',
-                  'bg-yellow-100 text-yellow-800': donor.familyStatus === 'Divorced',
-                  'bg-gray-100 text-gray-800': donor.familyStatus === 'Widowed'
-                }">
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Family Status</span>
+              <span *ngIf="donor.familyStatus" class="badge" style="margin-top:0.25rem"
+                [class]="donor.familyStatus === 'Single' ? 'badge-emerald' :
+                          donor.familyStatus === 'Married' ? 'badge-cyan' :
+                          donor.familyStatus === 'Divorced' ? 'badge-amber' : 'badge-slate'">
                 {{ donor.familyStatus }}
               </span>
-              <span *ngIf="!donor.familyStatus" class="block mt-1 text-sm text-gray-900">N/A</span>
+              <span *ngIf="!donor.familyStatus" style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">N/A</span>
             </div>
             <div>
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Number of Kids</span>
-              <span class="block mt-1 text-sm text-gray-900">{{ donor.numberOfKids }}</span>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Number of Kids</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.numberOfKids }}</span>
             </div>
-            <div class="sm:col-span-2" *ngIf="donor.generalNotes">
-              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">General Notes</span>
-              <span class="block mt-1 text-sm text-gray-900" style="white-space:pre-wrap">{{ donor.generalNotes }}</span>
+            <div style="grid-column:1/-1" *ngIf="donor.generalNotes">
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">General Notes</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0;white-space:pre-wrap">{{ donor.generalNotes }}</span>
             </div>
           </div>
         </div>
 
         <!-- Events Section -->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">
+        <div class="glass-card" style="padding:1.5rem;margin-bottom:1.25rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <h3 style="font-size:1.0625rem;font-weight:700;color:#f1f5f9;margin:0">
               Events
-              <span class="text-sm font-normal text-gray-500 ml-2">({{ donor.events?.length || 0 }})</span>
+              <span style="font-size:0.875rem;font-weight:400;color:#64748b;margin-left:0.5rem">({{ donor.events?.length || 0 }})</span>
             </h3>
-            <button *ngIf="isAdmin"
-              (click)="showAddEventForm()"
-              class="px-3 py-1.5 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition-colors">
+            <button *ngIf="isAdmin" (click)="showAddEventForm()"
+              style="display:inline-flex;align-items:center;gap:0.375rem;padding:0.4rem 0.875rem;font-size:0.8125rem;font-weight:600;color:white;background:linear-gradient(135deg,#8b5cf6,#6366f1);border:none;border-radius:0.5rem;cursor:pointer;box-shadow:0 4px 12px rgba(139,92,246,0.3)">
               + Add Event
             </button>
           </div>
 
           <!-- Empty -->
-          <div *ngIf="!donor.events || donor.events.length === 0" class="text-center py-8">
-            <svg class="mx-auto h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          <div *ngIf="!donor.events || donor.events.length === 0" style="text-align:center;padding:2rem 0">
+            <svg style="width:2.5rem;height:2.5rem;color:#334155;margin:0 auto 0.75rem;display:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
-            <p class="mt-2 text-sm text-gray-500">No events recorded yet.</p>
+            <p style="font-size:0.875rem;color:#475569;margin:0">No events recorded yet.</p>
           </div>
 
           <!-- Event List -->
-          <div *ngIf="donor.events && donor.events.length > 0" class="space-y-2">
+          <div *ngIf="donor.events && donor.events.length > 0" style="display:flex;flex-direction:column;gap:0.5rem">
             <div *ngFor="let event of donor.events; let i = index"
-              class="border border-gray-200 rounded-lg overflow-hidden">
+              style="border:1px solid rgba(100,116,139,0.2);border-radius:0.625rem;overflow:hidden">
 
-              <!-- Row Header -->
-              <button (click)="toggleEvent(i)"
-                class="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors"
+              <button (click)="toggleEvent(i)" class="accordion-header" style="width:100%;text-align:left;background:none;border:none"
                 [attr.aria-expanded]="expandedEvents.has(i)">
-                <div class="flex items-center gap-4 min-w-0">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                    {{ getEventTypeLabel(event.eventType) }}
-                  </span>
-                  <span class="text-sm text-gray-600">{{ event.eventDate | date:'mediumDate' }}</span>
+                <div style="display:flex;align-items:center;gap:1rem;min-width:0">
+                  <span class="badge badge-violet">{{ getEventTypeLabel(event.eventType) }}</span>
+                  <span style="font-size:0.875rem;color:#94a3b8">{{ event.eventDate | date:'mediumDate' }}</span>
                 </div>
-                <svg class="w-5 h-5 text-gray-400 shrink-0 transition-transform"
-                  [class.rotate-180]="expandedEvents.has(i)"
+                <svg style="width:1.25rem;height:1.25rem;color:#64748b;flex-shrink:0;transition:transform 0.2s"
+                  [style.transform]="expandedEvents.has(i) ? 'rotate(180deg)' : 'rotate(0)'"
                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
 
-              <!-- Expanded Content -->
-              <div *ngIf="expandedEvents.has(i)"
-                class="px-4 pb-4 border-t border-gray-100 bg-gray-50">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
+              <div *ngIf="expandedEvents.has(i)" class="accordion-body">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;padding-top:0.75rem">
                   <div>
-                    <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Event Type</span>
-                    <span class="block mt-1 text-sm text-gray-900">{{ getEventTypeLabel(event.eventType) }}</span>
+                    <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Event Type</span>
+                    <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ getEventTypeLabel(event.eventType) }}</span>
                   </div>
                   <div>
-                    <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Date</span>
-                    <span class="block mt-1 text-sm text-gray-900">{{ event.eventDate | date:'mediumDate' }}</span>
+                    <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Date</span>
+                    <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ event.eventDate | date:'mediumDate' }}</span>
                   </div>
-                  <div class="sm:col-span-2">
-                    <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Notes</span>
-                    <span class="block mt-1 text-sm text-gray-900">{{ event.notes || 'No notes' }}</span>
+                  <div style="grid-column:1/-1">
+                    <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Notes</span>
+                    <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ event.notes || 'No notes' }}</span>
                   </div>
-                  <div *ngIf="isAdmin" class="sm:col-span-2 flex gap-2 pt-2">
-                    <button (click)="showEditEventForm(event)"
-                      class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                      </svg>
-                      Edit
-                    </button>
-                    <button (click)="showDeleteEventDialog(event)"
-                      class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 transition-colors">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                      </svg>
-                      Delete
-                    </button>
+                  <div *ngIf="isAdmin" style="grid-column:1/-1;display:flex;gap:0.5rem;padding-top:0.5rem">
+                    <button (click)="showEditEventForm(event)" class="btn-ghost">Edit</button>
+                    <button (click)="showDeleteEventDialog(event)" class="btn-ghost" style="color:#f87171;border-color:rgba(239,68,68,0.3)">Delete</button>
                   </div>
                 </div>
               </div>
@@ -216,99 +186,71 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
         </div>
 
         <!-- Donation History Section -->
-        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">
+        <div class="glass-card" style="padding:1.5rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <h3 style="font-size:1.0625rem;font-weight:700;color:#f1f5f9;margin:0">
               Donation History
-              <span class="text-sm font-normal text-gray-500 ml-2">({{ donor.donations.length }})</span>
+              <span style="font-size:0.875rem;font-weight:400;color:#64748b;margin-left:0.5rem">({{ donor.donations.length }})</span>
             </h3>
             <button (click)="showAddDonationForm()"
-              class="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors">
+              style="display:inline-flex;align-items:center;gap:0.375rem;padding:0.4rem 0.875rem;font-size:0.8125rem;font-weight:600;color:white;background:linear-gradient(135deg,#10b981,#06b6d4);border:none;border-radius:0.5rem;cursor:pointer;box-shadow:0 4px 12px rgba(16,185,129,0.3)">
               + Add Donation
             </button>
           </div>
 
-          <div *ngIf="!donor.donations || donor.donations.length === 0" class="text-center py-8">
-            <svg class="mx-auto h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          <div *ngIf="!donor.donations || donor.donations.length === 0" style="text-align:center;padding:2rem 0">
+            <svg style="width:2.5rem;height:2.5rem;color:#334155;margin:0 auto 0.75rem;display:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <p class="mt-2 text-sm text-gray-500">No donations recorded yet.</p>
+            <p style="font-size:0.875rem;color:#475569;margin:0">No donations recorded yet.</p>
           </div>
 
-          <div *ngIf="donor.donations && donor.donations.length > 0" class="space-y-2">
+          <div *ngIf="donor.donations && donor.donations.length > 0" style="display:flex;flex-direction:column;gap:0.5rem">
             <div *ngFor="let donation of donor.donations; let i = index"
-              class="border border-gray-200 rounded-lg overflow-hidden">
-              <button (click)="toggleDonation(i)"
-                class="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors"
+              style="border:1px solid rgba(100,116,139,0.2);border-radius:0.625rem;overflow:hidden">
+              <button (click)="toggleDonation(i)" class="accordion-header" style="width:100%;text-align:left;background:none;border:none"
                 [attr.aria-expanded]="expandedDonations.has(i)"
                 [attr.aria-controls]="'donation-panel-' + i">
-                <div class="flex items-center gap-4 min-w-0">
-                  <span class="font-semibold text-gray-900 whitespace-nowrap">{{ donation.amount | currency }}</span>
-                  <span class="text-sm text-gray-600">{{ donation.donationDate | date:'mediumDate' }}</span>
-                  <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
-                    {{ donation.paymentMethod }}
-                  </span>
+                <div style="display:flex;align-items:center;gap:1rem;min-width:0">
+                  <span style="font-weight:700;color:#34d399;white-space:nowrap">{{ donation.amount | currency }}</span>
+                  <span style="font-size:0.875rem;color:#94a3b8">{{ donation.donationDate | date:'mediumDate' }}</span>
+                  <span class="badge badge-slate">{{ donation.paymentMethod }}</span>
                 </div>
-                <svg class="w-5 h-5 text-gray-400 shrink-0 transition-transform"
-                  [class.rotate-180]="expandedDonations.has(i)"
+                <svg style="width:1.25rem;height:1.25rem;color:#64748b;flex-shrink:0;transition:transform 0.2s"
+                  [style.transform]="expandedDonations.has(i) ? 'rotate(180deg)' : 'rotate(0)'"
                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
 
-              <div *ngIf="expandedDonations.has(i)" [id]="'donation-panel-' + i"
-                class="px-4 pb-4 border-t border-gray-100 bg-gray-50">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
+              <div *ngIf="expandedDonations.has(i)" [id]="'donation-panel-' + i" class="accordion-body">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;padding-top:0.75rem">
                   <div>
-                    <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Amount</span>
-                    <span class="block mt-1 text-sm text-gray-900">{{ donation.amount | currency }}</span>
-                  </div>
-                  <div>
-                    <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Date</span>
-                    <span class="block mt-1 text-sm text-gray-900">{{ donation.donationDate | date:'mediumDate' }}</span>
+                    <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Amount</span>
+                    <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donation.amount | currency }}</span>
                   </div>
                   <div>
-                    <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Payment Method</span>
-                    <span class="block mt-1 text-sm text-gray-900">{{ donation.paymentMethod }}</span>
+                    <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Date</span>
+                    <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donation.donationDate | date:'mediumDate' }}</span>
                   </div>
                   <div>
-                    <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Receipt Number</span>
-                    <span class="block mt-1 text-sm text-gray-900">{{ donation.receiptNumber || 'N/A' }}</span>
+                    <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Payment Method</span>
+                    <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donation.paymentMethod }}</span>
                   </div>
-                  <div class="sm:col-span-2">
-                    <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Notes</span>
-                    <span class="block mt-1 text-sm text-gray-900">{{ donation.notes || 'No notes' }}</span>
+                  <div>
+                    <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Receipt Number</span>
+                    <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donation.receiptNumber || 'N/A' }}</span>
                   </div>
-                  <div class="sm:col-span-2 flex flex-wrap gap-2 pt-2">
-                    <button (click)="downloadPdf(donation)"
-                      class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                      </svg>
-                      PDF
-                    </button>
-                    <button (click)="downloadDocx(donation)"
-                      class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded-md hover:bg-green-100 transition-colors">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                      </svg>
-                      Word
-                    </button>
-                    <button *ngIf="isAdmin" (click)="showEditDonation(donation)"
-                      class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                      </svg>
-                      Edit
-                    </button>
-                    <button *ngIf="isAdmin" (click)="showDeleteDonationDialog(donation)"
-                      class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 transition-colors">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                      </svg>
-                      Delete
-                    </button>
+                  <div style="grid-column:1/-1">
+                    <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Notes</span>
+                    <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donation.notes || 'No notes' }}</span>
+                  </div>
+                  <div style="grid-column:1/-1;display:flex;flex-wrap:wrap;gap:0.5rem;padding-top:0.5rem">
+                    <button (click)="downloadPdf(donation)" class="btn-ghost" style="color:#22d3ee;border-color:rgba(34,211,238,0.3)">PDF</button>
+                    <button (click)="downloadDocx(donation)" class="btn-ghost" style="color:#34d399;border-color:rgba(52,211,153,0.3)">Word</button>
+                    <button *ngIf="isAdmin" (click)="showEditDonation(donation)" class="btn-ghost">Edit</button>
+                    <button *ngIf="isAdmin" (click)="showDeleteDonationDialog(donation)" class="btn-ghost" style="color:#f87171;border-color:rgba(239,68,68,0.3)">Delete</button>
                   </div>
                 </div>
               </div>

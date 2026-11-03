@@ -125,7 +125,16 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DonorManagement.Api.Data.AppDbContext>();
-    db.Database.EnsureCreated();
+
+    // Apply any pending EF Core migrations on startup. This keeps the deployed
+    // database schema in sync with the model on every deploy.
+    // Migrations are provider-specific and target PostgreSQL (see DesignTimeDbContextFactory).
+    // Locally we use SQLite, where Migrate() would require SQLite-specific migrations;
+    // so only call Migrate() when running against a relational provider that has migrations.
+    if (db.Database.IsNpgsql())
+        db.Database.Migrate();
+    else
+        db.Database.EnsureCreated();
 
     // Seed admin user if no users exist
     if (!db.Users.Any())
