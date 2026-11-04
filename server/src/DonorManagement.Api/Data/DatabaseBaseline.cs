@@ -119,6 +119,27 @@ public static class DatabaseBaseline
         ALTER TABLE "Events" ADD COLUMN IF NOT EXISTS "Notes"     text;
         ALTER TABLE "Events" ADD COLUMN IF NOT EXISTS "CreatedAt" timestamp with time zone NOT NULL DEFAULT now();
         ALTER TABLE "Events" ADD COLUMN IF NOT EXISTS "UpdatedAt" timestamp with time zone NOT NULL DEFAULT now();
+
+        -- Align NOT NULL with the EF model: all columns below are nullable in the
+        -- model (e.g. FamilyStatus?), but an older EnsureCreated() schema may have
+        -- created some of them NOT NULL, which breaks imports that omit those values.
+        -- These run AFTER the ADD COLUMN statements above so the columns are
+        -- guaranteed to exist. DROP NOT NULL is idempotent (no-op if already nullable).
+        ALTER TABLE "Donors" ALTER COLUMN "Title"        DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "FirstName"    DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "LastName"     DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "SpouseName"   DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "Birthdate"    DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "HomePhone"    DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "CellPhone"    DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "WorkPhone"    DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "GeneralNotes" DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "Country"      DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "City"         DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "ZipCode"      DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "Location"     DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "FullAddress"  DROP NOT NULL;
+        ALTER TABLE "Donors" ALTER COLUMN "FamilyStatus" DROP NOT NULL;
         """;
 
     // Creates the history table (if needed) and records InitialCreate as applied,
