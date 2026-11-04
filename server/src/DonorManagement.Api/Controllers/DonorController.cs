@@ -4,6 +4,7 @@ using DonorManagement.Api.Models.Enums;
 using DonorManagement.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DonorManagement.Api.Controllers;
 
@@ -109,6 +110,14 @@ public class DonorController : ControllerBase
         catch (InvalidOperationException ex)
         {
             return BadRequest(new { message = ex.Message });
+        }
+        catch (DbUpdateException ex)
+        {
+            // Surface the underlying database error (e.g. a missing column) instead
+            // of a generic 500, so import problems are diagnosable from the client.
+            var detail = ex.InnerException?.Message ?? ex.Message;
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new { message = $"Database error during import: {detail}" });
         }
     }
 }

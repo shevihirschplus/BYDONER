@@ -90,6 +90,8 @@ public static class DatabaseBaseline
     // Enum columns are stored as text (EnumToStringConverter); defaults use valid
     // enum member names so existing rows satisfy the NOT NULL constraints.
     private const string SchemaSyncSql = """
+        ALTER TABLE "Donors" ADD COLUMN IF NOT EXISTS "Title"         text;
+        ALTER TABLE "Donors" ADD COLUMN IF NOT EXISTS "ZipCode"       text;
         ALTER TABLE "Donors" ADD COLUMN IF NOT EXISTS "FirstName"     text;
         ALTER TABLE "Donors" ADD COLUMN IF NOT EXISTS "LastName"      text;
         ALTER TABLE "Donors" ADD COLUMN IF NOT EXISTS "SpouseName"    text;
