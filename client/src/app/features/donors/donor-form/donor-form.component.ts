@@ -51,24 +51,30 @@ import { COUNTRIES_CITIES } from '../../../shared/data/countries-cities';
               Personal Information
             </legend>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.875rem">
+              <!-- Title -->
+              <div style="grid-column:1/-1">
+                <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem">Title</label>
+                <input type="text" formControlName="title" (input)="onNameChange()" class="dark-input" placeholder="Honorific / title (e.g. הר&quot;ר)"/>
+              </div>
               <!-- First Name -->
               <div>
                 <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem">First Name</label>
-                <input type="text" formControlName="firstName" class="dark-input" placeholder="First name"/>
+                <input type="text" formControlName="firstName" (input)="onNameChange()" class="dark-input" placeholder="First name"/>
               </div>
               <!-- Last Name -->
               <div>
                 <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem">Last Name</label>
-                <input type="text" formControlName="lastName" class="dark-input" placeholder="Last name"/>
+                <input type="text" formControlName="lastName" (input)="onNameChange()" class="dark-input" placeholder="Last name"/>
               </div>
-              <!-- Full Name (required) -->
+              <!-- Full Name (required, auto-filled) -->
               <div style="grid-column:1/-1">
                 <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem">
                   Full Name <span style="color:#f87171">*</span>
+                  <span style="font-weight:400;color:#475569;text-transform:none;letter-spacing:0">— auto-filled, editable</span>
                 </label>
-                <input type="text" formControlName="fullName" class="dark-input"
+                <input type="text" formControlName="fullName" (input)="onFullNameInput()" class="dark-input"
                   [class.error]="isFieldInvalid('fullName')"
-                  placeholder="Full name as it appears on receipts"/>
+                  placeholder="Auto-filled from first + last name"/>
                 <p *ngIf="isFieldInvalid('fullName')" style="margin-top:0.3rem;font-size:0.75rem;color:#f87171">Full name is required.</p>
               </div>
               <!-- Spouse Name -->
@@ -117,23 +123,21 @@ import { COUNTRIES_CITIES } from '../../../shared/data/countries-cities';
               <!-- Email -->
               <div style="grid-column:1/-1">
                 <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem">
-                  Email <span style="color:#f87171">*</span>
+                  Email
                 </label>
                 <input type="email" formControlName="email" class="dark-input"
                   [class.error]="isFieldInvalid('email')"
                   placeholder="email@example.com"/>
-                <p *ngIf="isFieldInvalid('email') && form.get('email')?.errors?.['required']" style="margin-top:0.3rem;font-size:0.75rem;color:#f87171">Email is required.</p>
                 <p *ngIf="isFieldInvalid('email') && form.get('email')?.errors?.['email']" style="margin-top:0.3rem;font-size:0.75rem;color:#f87171">Please enter a valid email address.</p>
               </div>
               <!-- Cell Phone -->
               <div>
                 <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem">
-                  Cell Phone <span style="color:#f87171">*</span>
+                  Cell Phone
                 </label>
                 <input type="tel" formControlName="phoneNumber" class="dark-input"
                   [class.error]="isFieldInvalid('phoneNumber')"
                   placeholder="+1 555 000 0000"/>
-                <p *ngIf="isFieldInvalid('phoneNumber') && form.get('phoneNumber')?.errors?.['required']" style="margin-top:0.3rem;font-size:0.75rem;color:#f87171">Cell phone is required.</p>
                 <p *ngIf="isFieldInvalid('phoneNumber') && form.get('phoneNumber')?.errors?.['pattern']" style="margin-top:0.3rem;font-size:0.75rem;color:#f87171">Invalid phone format.</p>
               </div>
               <!-- Home Phone -->
@@ -167,6 +171,11 @@ import { COUNTRIES_CITIES } from '../../../shared/data/countries-cities';
               Location
             </legend>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.875rem">
+              <!-- Street Address -->
+              <div style="grid-column:1/-1">
+                <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem">Address</label>
+                <input type="text" formControlName="fullAddress" class="dark-input" placeholder="Street, building, apartment…"/>
+              </div>
               <!-- Country -->
               <div>
                 <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem">Country</label>
@@ -178,15 +187,15 @@ import { COUNTRIES_CITIES } from '../../../shared/data/countries-cities';
               <!-- City -->
               <div>
                 <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem">City</label>
-                <input type="text" formControlName="city" list="city-options" placeholder="Select or type a city" class="dark-input"/>
-                <datalist id="city-options">
-                  <option *ngFor="let city of cities" [value]="city"></option>
-                </datalist>
+                <select formControlName="city" class="dark-input" style="cursor:pointer" [disabled]="cities.length === 0">
+                  <option [ngValue]="null" style="background:#1e293b">{{ cities.length ? 'Select city' : 'Select a country first' }}</option>
+                  <option *ngFor="let city of cities" [value]="city" style="background:#1e293b">{{ city }}</option>
+                </select>
               </div>
-              <!-- Full Address -->
-              <div style="grid-column:1/-1">
-                <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem">Full Address</label>
-                <input type="text" formControlName="fullAddress" class="dark-input" placeholder="Street address, apartment, etc."/>
+              <!-- Zip Code -->
+              <div>
+                <label style="display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:0.375rem">Zip Code</label>
+                <input type="text" formControlName="zipCode" class="dark-input" placeholder="Postal / ZIP code"/>
               </div>
             </div>
           </fieldset>
@@ -239,6 +248,7 @@ export class DonorFormComponent implements OnChanges {
   @Output() closed = new EventEmitter<void>();
 
   submitting = false;
+  fullNameManuallyEdited = false;
 
   familyStatuses = Object.values(FamilyStatus);
 
@@ -246,18 +256,20 @@ export class DonorFormComponent implements OnChanges {
   cities: string[] = [];
 
   form: FormGroup = this.fb.group({
+    title: [null],
     firstName: [null],
     lastName: [null],
     fullName: ['', [Validators.required]],
     spouseName: [null],
     birthdate: [null],
-    email: ['', [Validators.required, Validators.email]],
-    phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9+\-() ]+$/)]],
+    email: ['', [Validators.email]],
+    phoneNumber: ['', [Validators.pattern(/^[0-9+\-() ]+$/)]],
     homePhone: [null, [Validators.pattern(/^[0-9+\-() ]+$/)]],
     workPhone: [null, [Validators.pattern(/^[0-9+\-() ]+$/)]],
     generalNotes: [null],
     country: [null],
     city: [null],
+    zipCode: [null],
     fullAddress: [null],
     familyStatus: [null],
     numberOfKids: [null, [Validators.min(0)]]
@@ -277,7 +289,25 @@ export class DonorFormComponent implements OnChanges {
   onCountryChange(): void {
     const country = this.form.get('country')?.value;
     this.cities = country ? (COUNTRIES_CITIES[country] || []) : [];
-    this.form.patchValue({ city: '' });
+    this.form.patchValue({ city: null });
+  }
+
+  /** Auto-fill Full Name from First + Last unless the user has manually edited it. */
+  onNameChange(): void {
+    if (this.fullNameManuallyEdited) {
+      return;
+    }
+    const title = (this.form.get('title')?.value || '').trim();
+    const first = (this.form.get('firstName')?.value || '').trim();
+    const last = (this.form.get('lastName')?.value || '').trim();
+    const combined = [title, first, last].filter(Boolean).join(' ');
+    this.form.get('fullName')?.setValue(combined, { emitEvent: false });
+  }
+
+  onFullNameInput(): void {
+    // Mark as manually edited so auto-fill stops; if cleared, resume auto-fill.
+    const value = (this.form.get('fullName')?.value || '').trim();
+    this.fullNameManuallyEdited = value.length > 0;
   }
 
   onClose(): void {
@@ -295,6 +325,7 @@ export class DonorFormComponent implements OnChanges {
 
     const request: CreateDonorRequest | UpdateDonorRequest = {
       fullName: formValue.fullName,
+      title: formValue.title || null,
       firstName: formValue.firstName || null,
       lastName: formValue.lastName || null,
       spouseName: formValue.spouseName || null,
@@ -307,6 +338,7 @@ export class DonorFormComponent implements OnChanges {
       generalNotes: formValue.generalNotes || null,
       country: formValue.country || null,
       city: formValue.city || null,
+      zipCode: formValue.zipCode || null,
       location: null,
       fullAddress: formValue.fullAddress || null,
       familyStatus: formValue.familyStatus || null,
@@ -340,6 +372,7 @@ export class DonorFormComponent implements OnChanges {
     if (this.donor) {
       this.cities = this.donor.country ? (COUNTRIES_CITIES[this.donor.country] || []) : [];
       this.form.patchValue({
+        title: this.donor.title,
         firstName: this.donor.firstName,
         lastName: this.donor.lastName,
         fullName: this.donor.fullName,
@@ -352,13 +385,18 @@ export class DonorFormComponent implements OnChanges {
         generalNotes: this.donor.generalNotes,
         country: this.donor.country,
         city: this.donor.city,
+        zipCode: this.donor.zipCode,
         fullAddress: this.donor.fullAddress,
         familyStatus: this.donor.familyStatus,
         numberOfKids: this.donor.numberOfKids
       });
+      // If the saved full name doesn't match "title first last", treat it as a custom value
+      const auto = [this.donor.title || '', this.donor.firstName || '', this.donor.lastName || ''].map(s => s.trim()).filter(Boolean).join(' ');
+      this.fullNameManuallyEdited = (this.donor.fullName || '').trim() !== auto;
     } else {
       this.cities = [];
-      this.form.reset({ numberOfKids: null, familyStatus: null, country: null, city: null });
+      this.form.reset({ numberOfKids: null, familyStatus: null, country: null, city: null, zipCode: null });
+      this.fullNameManuallyEdited = false;
     }
     this.form.markAsPristine();
     this.form.markAsUntouched();

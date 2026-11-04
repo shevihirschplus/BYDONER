@@ -12,6 +12,7 @@ public static class MappingExtensions
         {
             Id = donor.Id,
             FullName = donor.FullName,
+            Title = donor.Title,
             FirstName = donor.FirstName,
             LastName = donor.LastName,
             SpouseName = donor.SpouseName,
@@ -24,6 +25,7 @@ public static class MappingExtensions
             GeneralNotes = donor.GeneralNotes,
             Country = donor.Country,
             City = donor.City,
+            ZipCode = donor.ZipCode,
             Location = donor.Location,
             FullAddress = donor.FullAddress,
             FamilyStatus = donor.FamilyStatus,
@@ -87,6 +89,7 @@ public static class MappingExtensions
         {
             Id = Guid.NewGuid(),
             FullName = request.FullName,
+            Title = request.Title,
             FirstName = request.FirstName,
             LastName = request.LastName,
             SpouseName = request.SpouseName,
@@ -99,6 +102,7 @@ public static class MappingExtensions
             GeneralNotes = request.GeneralNotes,
             Country = request.Country,
             City = request.City,
+            ZipCode = request.ZipCode,
             Location = request.Location,
             FullAddress = request.FullAddress,
             FamilyStatus = request.FamilyStatus,

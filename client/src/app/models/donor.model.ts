@@ -11,6 +11,7 @@ export enum FamilyStatus {
 export interface Donor {
   id: string;
   fullName: string;
+  title: string | null;
   firstName: string | null;
   lastName: string | null;
   spouseName: string | null;
@@ -23,6 +24,7 @@ export interface Donor {
   generalNotes: string | null;
   country: string | null;
   city: string | null;
+  zipCode: string | null;
   location: string | null;
   fullAddress: string | null;
   familyStatus: FamilyStatus | null;
@@ -35,6 +37,7 @@ export interface Donor {
 
 export interface CreateDonorRequest {
   fullName: string;
+  title: string | null;
   firstName: string | null;
   lastName: string | null;
   spouseName: string | null;
@@ -47,6 +50,7 @@ export interface CreateDonorRequest {
   generalNotes: string | null;
   country: string | null;
   city: string | null;
+  zipCode: string | null;
   location: string | null;
   fullAddress: string | null;
   familyStatus: FamilyStatus | null;
@@ -55,6 +59,7 @@ export interface CreateDonorRequest {
 
 export interface UpdateDonorRequest {
   fullName: string;
+  title: string | null;
   firstName: string | null;
   lastName: string | null;
   spouseName: string | null;
@@ -67,6 +72,7 @@ export interface UpdateDonorRequest {
   generalNotes: string | null;
   country: string | null;
   city: string | null;
+  zipCode: string | null;
   location: string | null;
   fullAddress: string | null;
   familyStatus: FamilyStatus | null;
@@ -90,4 +96,11 @@ export interface PagedResult<T> {
   totalCount: number;
   page: number;
   pageSize: number;
+}
+
+export interface DonorImportResult {
+  totalRows: number;
+  imported: number;
+  skipped: number;
+  errors: string[];
 }

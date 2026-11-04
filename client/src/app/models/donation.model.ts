@@ -4,6 +4,7 @@ export enum PaymentMethod {
   BankTransfer = 'BankTransfer',
   Check = 'Check',
   NedarimPlus = 'NedarimPlus',
+  Achisamach = 'Achisamach',
   Other = 'Other'
 }
 

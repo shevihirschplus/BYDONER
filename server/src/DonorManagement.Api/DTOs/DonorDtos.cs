@@ -7,6 +7,7 @@ namespace DonorManagement.Api.DTOs;
 public class CreateDonorRequest
 {
     public string FullName { get; set; } = string.Empty;
+    public string? Title { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? SpouseName { get; set; }
@@ -19,6 +20,7 @@ public class CreateDonorRequest
     public string? GeneralNotes { get; set; }
     public string? Country { get; set; }
     public string? City { get; set; }
+    public string? ZipCode { get; set; }
     public string? Location { get; set; }
     public string? FullAddress { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -29,6 +31,7 @@ public class CreateDonorRequest
 public class UpdateDonorRequest
 {
     public string FullName { get; set; } = string.Empty;
+    public string? Title { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? SpouseName { get; set; }
@@ -41,6 +44,7 @@ public class UpdateDonorRequest
     public string? GeneralNotes { get; set; }
     public string? Country { get; set; }
     public string? City { get; set; }
+    public string? ZipCode { get; set; }
     public string? Location { get; set; }
     public string? FullAddress { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -52,6 +56,7 @@ public class DonorResponse
 {
     public Guid Id { get; set; }
     public string FullName { get; set; } = string.Empty;
+    public string? Title { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? SpouseName { get; set; }
@@ -64,6 +69,7 @@ public class DonorResponse
     public string? GeneralNotes { get; set; }
     public string? Country { get; set; }
     public string? City { get; set; }
+    public string? ZipCode { get; set; }
     public string? Location { get; set; }
     public string? FullAddress { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]

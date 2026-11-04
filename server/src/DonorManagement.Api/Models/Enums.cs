@@ -15,6 +15,7 @@ public enum PaymentMethod
     BankTransfer,
     Check,
     NedarimPlus,
+    Achisamach,
     Other
 }
 

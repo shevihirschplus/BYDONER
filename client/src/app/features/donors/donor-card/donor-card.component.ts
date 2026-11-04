@@ -97,8 +97,12 @@ import { EventFormComponent } from '../../events/event-form/event-form.component
               <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ getLocation() }}</span>
             </div>
             <div style="grid-column:1/-1">
-              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Full Address</span>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Address</span>
               <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.fullAddress || 'N/A' }}</span>
+            </div>
+            <div>
+              <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Zip Code</span>
+              <span style="display:block;margin-top:0.25rem;font-size:0.875rem;color:#e2e8f0">{{ donor.zipCode || 'N/A' }}</span>
             </div>
             <div>
               <span style="display:block;font-size:0.7rem;font-weight:600;color:#64748b;letter-spacing:0.05em;text-transform:uppercase">Family Status</span>

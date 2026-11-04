@@ -6,6 +6,7 @@ import {
   CreateDonorRequest,
   UpdateDonorRequest,
   DonorSearchFilter,
+  DonorImportResult,
   PagedResult
 } from '../../models/donor.model';
 
@@ -64,5 +65,11 @@ export class DonorService {
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  importExcel(file: File): Observable<DonorImportResult> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<DonorImportResult>(`${this.baseUrl}/import`, formData);
   }
 }

@@ -190,6 +190,7 @@ export class DonationFormComponent implements OnChanges {
       case PaymentMethod.BankTransfer: return 'Bank Transfer';
       case PaymentMethod.Check: return 'Check';
       case PaymentMethod.NedarimPlus: return 'Nedarim Plus';
+      case PaymentMethod.Achisamach: return 'Achisamach';
       case PaymentMethod.Other: return 'Other';
       default: return method;
     }

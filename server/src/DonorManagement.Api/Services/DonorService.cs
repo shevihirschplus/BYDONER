@@ -127,6 +127,7 @@ public class DonorService : IDonorService
         }
 
         donor.FullName = request.FullName;
+        donor.Title = request.Title;
         donor.FirstName = request.FirstName;
         donor.LastName = request.LastName;
         donor.SpouseName = request.SpouseName;
@@ -139,6 +140,7 @@ public class DonorService : IDonorService
         donor.GeneralNotes = request.GeneralNotes;
         donor.Country = request.Country;
         donor.City = request.City;
+        donor.ZipCode = request.ZipCode;
         donor.Location = request.Location;
         donor.FullAddress = request.FullAddress;
         donor.FamilyStatus = request.FamilyStatus;

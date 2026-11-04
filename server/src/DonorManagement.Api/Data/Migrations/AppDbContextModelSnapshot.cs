@@ -131,10 +131,16 @@ namespace DonorManagement.Api.Data.Migrations
                     b.Property<string>("SpouseName")
                         .HasColumnType("text");
 
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("WorkPhone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ZipCode")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

@@ -12,10 +12,12 @@ namespace DonorManagement.Api.Controllers;
 public class DonorController : ControllerBase
 {
     private readonly IDonorService _donorService;
+    private readonly IDonorImportService _donorImportService;
 
-    public DonorController(IDonorService donorService)
+    public DonorController(IDonorService donorService, IDonorImportService donorImportService)
     {
         _donorService = donorService;
+        _donorImportService = donorImportService;
     }
 
     [HttpGet]
@@ -80,5 +82,33 @@ public class DonorController : ControllerBase
         var deleted = await _donorService.DeleteAsync(id);
         if (!deleted) return NotFound();
         return NoContent();
+    }
+
+    [HttpPost("import")]
+    [Authorize(Policy = "AdminOnly")]
+    [RequestSizeLimit(10 * 1024 * 1024)] // 10 MB
+    public async Task<ActionResult<DonorImportResult>> Import(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest(new { message = "No file was uploaded." });
+        }
+
+        var extension = Path.GetExtension(file.FileName);
+        if (!string.Equals(extension, ".xlsx", StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(new { message = "Only .xlsx files are supported." });
+        }
+
+        try
+        {
+            await using var stream = file.OpenReadStream();
+            var result = await _donorImportService.ImportAsync(stream);
+            return Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 }

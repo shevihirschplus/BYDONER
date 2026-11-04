@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { DonorService } from '../../../core/services/donor.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { Donor, DonorSearchFilter, FamilyStatus, PagedResult } from '../../../models/donor.model';
 import { DonorFormComponent } from '../donor-form/donor-form.component';
 
@@ -20,12 +21,26 @@ import { DonorFormComponent } from '../donor-form/donor-form.component';
           <h1 style="font-size:1.75rem;font-weight:800;color:#f1f5f9;margin:0;letter-spacing:-0.02em">Donors</h1>
           <p *ngIf="totalCount > 0" style="color:#64748b;font-size:0.875rem;margin:0.25rem 0 0">{{ totalCount }} total</p>
         </div>
-        <button *ngIf="isAdmin" (click)="showAddDonorForm()" class="btn-primary">
-          <svg style="width:1rem;height:1rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-          </svg>
-          Add Donor
-        </button>
+        <div *ngIf="isAdmin" style="display:flex;gap:0.625rem;align-items:center">
+          <!-- Hidden file input for Excel upload -->
+          <input #excelInput type="file" accept=".xlsx"
+            style="display:none"
+            (change)="onExcelSelected($event)"/>
+          <button (click)="excelInput.click()" class="btn-secondary" [disabled]="uploading"
+            style="display:flex;align-items:center;gap:0.375rem">
+            <span *ngIf="uploading" style="width:0.875rem;height:0.875rem;border:2px solid rgba(255,255,255,0.3);border-top-color:#22d3ee;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block"></span>
+            <svg *ngIf="!uploading" style="width:1rem;height:1rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+            {{ uploading ? 'Uploading…' : 'Upload Excel' }}
+          </button>
+          <button (click)="showAddDonorForm()" class="btn-primary">
+            <svg style="width:1rem;height:1rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Donor
+          </button>
+        </div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:1.25rem">
@@ -216,6 +231,7 @@ import { DonorFormComponent } from '../donor-form/donor-form.component';
 export class DonorListComponent implements OnInit, OnDestroy {
   private donorService = inject(DonorService);
   private authService = inject(AuthService);
+  private notificationService = inject(NotificationService);
   private router = inject(Router);
   private destroy$ = new Subject<void>();
   private searchSubject$ = new Subject<string>();
@@ -226,6 +242,7 @@ export class DonorListComponent implements OnInit, OnDestroy {
   filtersOpen = false;
   showDonorForm = false;
   isAdmin = false;
+  uploading = false;
 
   // Pagination
   currentPage = 1;
@@ -299,6 +316,38 @@ export class DonorListComponent implements OnInit, OnDestroy {
   onDonorCreated(): void {
     this.showDonorForm = false;
     this.loadDonors();
+  }
+
+  onExcelSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    this.uploading = true;
+    this.donorService.importExcel(file)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.uploading = false;
+          input.value = ''; // allow re-selecting the same file
+          const base = `Imported ${result.imported} of ${result.totalRows} donor(s).`;
+          if (result.skipped > 0) {
+            this.notificationService.success(`${base} ${result.skipped} row(s) skipped.`);
+          } else {
+            this.notificationService.success(base);
+          }
+          this.currentPage = 1;
+          this.loadDonors();
+        },
+        error: (err) => {
+          this.uploading = false;
+          input.value = '';
+          const msg = err?.error?.message || `Upload failed (${err.status}). Please try again.`;
+          this.notificationService.error(msg);
+        }
+      });
   }
 
   previousPage(): void {

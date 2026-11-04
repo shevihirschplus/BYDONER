@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/features/donations/donation-list/donation-list.component.ts"],
+  "sourcesContent": ["import { Component } from '@angular/core';\r\nimport { CommonModule } from '@angular/common';\r\n\r\n@Component({\r\n  selector: 'app-donation-list',\r\n  standalone: true,\r\n  imports: [CommonModule],\r\n  template: `\r\n    <div class=\"p-6\">\r\n      <h1 class=\"text-2xl font-bold text-gray-900 mb-4\">Donations</h1>\r\n      <p class=\"text-gray-500\">Donation list component - to be implemented</p>\r\n    </div>\r\n  `\r\n})\r\nexport class DonationListComponent {}\r\n"],
+  "mappings": ";;;;;;;;;;;AAcM,IAAO,wBAAP,MAAO,uBAAqB;;;uBAArB,wBAAqB;IAAA;EAAA;;yEAArB,wBAAqB,WAAA,CAAA,CAAA,mBAAA,CAAA,GAAA,YAAA,MAAA,UAAA,CAAA,6BAAA,GAAA,OAAA,GAAA,MAAA,GAAA,QAAA,CAAA,CAAA,GAAA,KAAA,GAAA,CAAA,GAAA,YAAA,aAAA,iBAAA,MAAA,GAAA,CAAA,GAAA,eAAA,CAAA,GAAA,UAAA,SAAA,+BAAA,IAAA,KAAA;AAAA,UAAA,KAAA,GAAA;AAN9B,QAAA,yBAAA,GAAA,OAAA,CAAA,EAAiB,GAAA,MAAA,CAAA;AACmC,QAAA,iBAAA,GAAA,WAAA;AAAS,QAAA,uBAAA;AAC3D,QAAA,yBAAA,GAAA,KAAA,CAAA;AAAyB,QAAA,iBAAA,GAAA,6CAAA;AAA2C,QAAA,uBAAA,EAAI;;sBAJlE,YAAY,GAAA,eAAA,EAAA,CAAA;EAAA;;;6EAQX,uBAAqB,EAAA,WAAA,yBAAA,UAAA,4EAAA,YAAA,GAAA,CAAA;AAAA,GAAA;",
+  "names": []
+}
